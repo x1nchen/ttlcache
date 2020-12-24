@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	ttlcache "github.com/x1nchen/ttlcache"
+	"github.com/x1nchen/ttlcache"
 	"github.com/x1nchen/ttlcache/lru"
 
 	"github.com/stretchr/testify/require"

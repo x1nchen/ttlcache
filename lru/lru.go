@@ -122,14 +122,14 @@ func (c *Cache) Get(ctx context.Context, key string) (interface{}, error) {
 
 	e, ok := c.m[key]
 	if !ok {
-		return nil, cache.ErrKeyNotFound
+		return nil, ttlcache.ErrKeyNotFound
 	}
 
 	n := e.Value.(*node)
 	if n.expireAt.Before(time.Now()) {
 		c.l.Remove(e)
 		delete(c.m, n.key)
-		return nil, cache.ErrKeyNotFound
+		return nil, ttlcache.ErrKeyNotFound
 	}
 	c.l.MoveToBack(e)
 	return n.value, nil
