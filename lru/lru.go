@@ -18,11 +18,13 @@ type node struct {
 type options struct {
 	maxCache int
 	gcPeriod time.Duration
+	ttl      time.Duration
 }
 
 var defaultOptions = options{
 	maxCache: 0,
 	gcPeriod: 5 * time.Second,
+	ttl:      time.Minute,
 }
 
 type Option func(options *options)
@@ -36,6 +38,12 @@ func WithMaxCache(maxCache int) Option {
 func WithGcPeriod(gcPeriod time.Duration) Option {
 	return func(options *options) {
 		options.gcPeriod = gcPeriod
+	}
+}
+
+func WithTTL(ttl time.Duration) Option {
+	return func(options *options) {
+		options.ttl = ttl
 	}
 }
 
@@ -131,6 +139,8 @@ func (c *Cache) Get(ctx context.Context, key string) (interface{}, error) {
 		delete(c.m, n.key)
 		return nil, ttlcache.ErrKeyNotFound
 	}
+	// cache hit will refresh ttl
+	n.expireAt.Add(c.ttl)
 	c.l.MoveToBack(e)
 	return n.value, nil
 }
