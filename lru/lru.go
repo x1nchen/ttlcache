@@ -140,7 +140,7 @@ func (c *Cache) Get(ctx context.Context, key string) (interface{}, error) {
 		return nil, ttlcache.ErrKeyNotFound
 	}
 	// cache hit will refresh ttl
-	n.expireAt.Add(c.ttl)
+	n.expireAt = n.expireAt.Add(c.ttl)
 	c.l.MoveToBack(e)
 	return n.value, nil
 }
